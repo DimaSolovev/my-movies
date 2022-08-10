@@ -1,4 +1,4 @@
-package com.dima.mymovies;
+package com.dima.mymovies.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dima.mymovies.R;
 import com.dima.mymovies.data.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -32,11 +33,11 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         this.onPosterClickListener = onPosterClickListener;
     }
 
-    interface OnPosterClickListener {
+    public interface OnPosterClickListener {
         void onPosterClick(int position);
     }
 
-    interface OnReachEndListener {
+    public interface OnReachEndListener {
         void onReachEnd();
     }
 

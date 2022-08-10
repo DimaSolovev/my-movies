@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dima.mymovies.adapters.MovieAdapter;
 import com.dima.mymovies.data.MainViewModel;
 import com.dima.mymovies.data.Movie;
 import com.dima.mymovies.utils.JSONUtils;

@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.dima.mymovies.adapters.MovieAdapter;
 import com.dima.mymovies.data.FavouriteMovie;
 import com.dima.mymovies.data.MainViewModel;
 import com.dima.mymovies.data.Movie;
