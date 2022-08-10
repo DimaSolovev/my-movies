@@ -13,7 +13,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.AsynchronousChannelGroup;
 import java.util.concurrent.ExecutionException;
 
 public class NetworkUtils {
@@ -27,10 +26,13 @@ public class NetworkUtils {
     private static final String PARAMS_LANGUAGE = "language";
     private static final String PARAMS_SORT_BY = "sort_by";
     private static final String PARAMS_PAGE = "page";
+    private static final String PARAMS_MINT_VOTE_COUNT = "vote_count.gte";
+
     private static final String API_KEY = "53cbc550383ffde1cccc960cf9fb606b";
     private static final String LANGUAGE_VALUE = "ru-RU";
     private static final String SORT_BY_POPULARITY = "popularity.desc";
     private static final String SORT_BY_TOP_RATED = "vote_average.desc";
+    private static final String MIN_VOTE_COUNT_VALUE = "1000";
 
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
@@ -72,6 +74,7 @@ public class NetworkUtils {
                 .appendQueryParameter(PARAMS_API_KEY,API_KEY)
                 .appendQueryParameter(PARAMS_LANGUAGE,LANGUAGE_VALUE)
                 .appendQueryParameter(PARAMS_SORT_BY,methodOfSort)
+                .appendQueryParameter(PARAMS_MINT_VOTE_COUNT, MIN_VOTE_COUNT_VALUE)
                 .appendQueryParameter(PARAMS_PAGE, Integer.toString(page))
                 .build();
         try {
