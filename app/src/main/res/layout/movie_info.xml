@@ -13,6 +13,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/viewLine"
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:layout_margin="4dp"
@@ -43,7 +44,7 @@
         android:layout_height="wrap_content"
         android:text="Оригинальное название"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 
     <TextView
         android:id="@+id/textViewOriginalTitle"
@@ -52,7 +53,7 @@
         android:text="TextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guidelineCenter"
-        app:layout_constraintTop_toTopOf="@+id/textViewTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 
     <TextView
         android:id="@+id/textViewLabelRating"
