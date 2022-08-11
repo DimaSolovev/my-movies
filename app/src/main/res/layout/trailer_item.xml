@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/imageViewPlay"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="@dimen/image_play_size"
+            android:layout_height="@dimen/image_play_size"
             android:layout_margin="8dp"
             android:contentDescription="@string/start_trailer"
             app:layout_constraintBottom_toBottomOf="parent"

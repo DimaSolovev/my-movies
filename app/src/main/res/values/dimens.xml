@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="size_of_star">60dp</dimen>
+    <dimen name="author_margin_size">8dp</dimen>
+    <dimen name="image_play_size">60dp</dimen>
 </resources>

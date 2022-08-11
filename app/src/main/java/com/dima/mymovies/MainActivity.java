@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONObject> {
 
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static int page = 1;
     private static int methodOfSort;
     private static boolean isLoading = false;
+
+    private static String lang;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        lang = Locale.getDefault().getLanguage();
         loaderManager = LoaderManager.getInstance(this);
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         textViewPopularity = findViewById(R.id.textViewPopularity);
@@ -160,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void downloadData(int methodOfSort, int page) {
-        URL url = NetworkUtils.buildURL(methodOfSort, page);
+        URL url = NetworkUtils.buildURL(methodOfSort, page, lang);
         Bundle bundle = new Bundle();
         bundle.putString("url", url.toString());
         loaderManager.restartLoader(LOADER_ID, bundle, this);
