@@ -43,7 +43,7 @@ public class NetworkUtils {
     public static final int POPULARITY = 0;
     public static final int TOP_RATED = 1;
 
-    public static URL buildURLVideos(int id){
+    public static URL buildURLVideos(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_VIDEOS, id)).buildUpon()
                 .appendQueryParameter(PARAMS_API_KEY, API_KEY)
                 .appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE)
@@ -56,7 +56,7 @@ public class NetworkUtils {
         return null;
     }
 
-    public static URL buildURLReviews(int id){
+    public static URL buildURLReviews(int id) {
         Uri uri = Uri.parse(String.format(BASE_URL_REVIEWS, id)).buildUpon()
                 //.appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE)
                 .appendQueryParameter(PARAMS_API_KEY, API_KEY).build();
@@ -68,18 +68,18 @@ public class NetworkUtils {
         return null;
     }
 
-    public static URL buildURL(int sortBy, int page){
+    public static URL buildURL(int sortBy, int page) {
         URL result = null;
-        String methodOfSort ;
-        if(sortBy == POPULARITY){
+        String methodOfSort;
+        if (sortBy == POPULARITY) {
             methodOfSort = SORT_BY_POPULARITY;
         } else {
             methodOfSort = SORT_BY_TOP_RATED;
         }
         Uri uri = Uri.parse(BASE_URL).buildUpon()
-                .appendQueryParameter(PARAMS_API_KEY,API_KEY)
-                .appendQueryParameter(PARAMS_LANGUAGE,LANGUAGE_VALUE)
-                .appendQueryParameter(PARAMS_SORT_BY,methodOfSort)
+                .appendQueryParameter(PARAMS_API_KEY, API_KEY)
+                .appendQueryParameter(PARAMS_LANGUAGE, LANGUAGE_VALUE)
+                .appendQueryParameter(PARAMS_SORT_BY, methodOfSort)
                 .appendQueryParameter(PARAMS_MINT_VOTE_COUNT, MIN_VOTE_COUNT_VALUE)
                 .appendQueryParameter(PARAMS_PAGE, Integer.toString(page))
                 .build();
@@ -91,9 +91,9 @@ public class NetworkUtils {
         return result;
     }
 
-    public static JSONObject getJSONFromNetwork(int sortBy, int page){
+    public static JSONObject getJSONFromNetwork(int sortBy, int page) {
         JSONObject result = null;
-        URL url =buildURL(sortBy,page);
+        URL url = buildURL(sortBy, page);
         try {
             result = new JSONLoadTask().execute(url).get();
         } catch (ExecutionException | InterruptedException e) {
@@ -102,7 +102,7 @@ public class NetworkUtils {
         return result;
     }
 
-    public static JSONObject getJSONForVideo(int id){
+    public static JSONObject getJSONForVideo(int id) {
         JSONObject result = null;
         URL url = buildURLVideos(id);
         try {
@@ -113,7 +113,7 @@ public class NetworkUtils {
         return result;
     }
 
-    public static JSONObject getJSONForReviews(int id){
+    public static JSONObject getJSONForReviews(int id) {
         JSONObject result = null;
         URL url = buildURLReviews(id);
         try {
@@ -124,9 +124,19 @@ public class NetworkUtils {
         return result;
     }
 
-    public static class JSONLoader extends AsyncTaskLoader<JSONObject>{
+    public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 
         private Bundle bundle;
+        private OnStartLoadingListener onStartLoadingListener;
+
+        public interface OnStartLoadingListener {
+            void onStartLoading();
+        }
+
+        public void setOnStartLoadingListener(OnStartLoadingListener onStartLoadingListener) {
+            this.onStartLoadingListener = onStartLoadingListener;
+        }
+
         public JSONLoader(@NonNull Context context, Bundle bundle) {
             super(context);
             this.bundle = bundle;
@@ -135,13 +145,16 @@ public class NetworkUtils {
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
+            if (onStartLoadingListener != null){
+                onStartLoadingListener.onStartLoading();
+            }
             forceLoad();
         }
 
         @Nullable
         @Override
         public JSONObject loadInBackground() {
-            if(bundle == null){
+            if (bundle == null) {
                 return null;
             }
             String urlAsString = bundle.getString("url");
@@ -152,7 +165,7 @@ public class NetworkUtils {
                 e.printStackTrace();
             }
             JSONObject result = null;
-            if(url== null){
+            if (url == null) {
                 return result;
             }
             HttpURLConnection connection = null;
@@ -163,7 +176,7 @@ public class NetworkUtils {
                 BufferedReader reader = new BufferedReader(inputStreamReader);
                 StringBuilder builder = new StringBuilder();
                 String line = reader.readLine();
-                while (line != null){
+                while (line != null) {
                     builder.append(line);
                     line = reader.readLine();
                 }
@@ -173,7 +186,7 @@ public class NetworkUtils {
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null){
+                if (connection != null) {
                     connection.disconnect();
                 }
             }
@@ -181,11 +194,11 @@ public class NetworkUtils {
         }
     }
 
-    private static class JSONLoadTask extends AsyncTask<URL, Void, JSONObject>{
+    private static class JSONLoadTask extends AsyncTask<URL, Void, JSONObject> {
         @Override
         protected JSONObject doInBackground(URL... urls) {
             JSONObject result = null;
-            if(urls == null || urls.length == 0){
+            if (urls == null || urls.length == 0) {
                 return result;
             }
             HttpURLConnection connection = null;
@@ -196,7 +209,7 @@ public class NetworkUtils {
                 BufferedReader reader = new BufferedReader(inputStreamReader);
                 StringBuilder builder = new StringBuilder();
                 String line = reader.readLine();
-                while (line != null){
+                while (line != null) {
                     builder.append(line);
                     line = reader.readLine();
                 }
@@ -206,7 +219,7 @@ public class NetworkUtils {
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null){
+                if (connection != null) {
                     connection.disconnect();
                 }
             }

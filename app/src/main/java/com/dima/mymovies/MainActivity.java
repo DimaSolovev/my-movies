@@ -7,6 +7,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,11 +43,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private Switch switchSort;
     private TextView textViewTopRated;
     private TextView textViewPopularity;
+    private ProgressBar progressBarLoading;
 
     private MainViewModel viewModel;
 
     private static final int LOADER_ID = 133;
     private LoaderManager loaderManager;
+
+    private static int page = 1;
+    private static int methodOfSort;
+    private static boolean isLoading = false;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -58,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.itemMain:
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
@@ -79,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
         textViewPopularity = findViewById(R.id.textViewPopularity);
         textViewTopRated = findViewById(R.id.textViewTopRated);
+        progressBarLoading = findViewById(R.id.progressBarLoading);
         switchSort = findViewById(R.id.switchSort);
         recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
         recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, 2));
@@ -88,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switchSort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                page = 1;
                 setMethodOfSort(isChecked);
             }
         });
@@ -96,22 +104,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             @Override
             public void onPosterClick(int position) {
                 Movie movie = movieAdapter.getMovies().get(position);
-                Intent intent = new Intent(MainActivity.this,DetailActivity.class);
-                intent.putExtra("id",movie.getId());
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("id", movie.getId());
                 startActivity(intent);
             }
         });
         movieAdapter.setOnReachEndListener(new MovieAdapter.OnReachEndListener() {
             @Override
             public void onReachEnd() {
-                Toast.makeText(MainActivity.this, "Конец списка", Toast.LENGTH_SHORT).show();
+                if(!isLoading) {
+                    downloadData(methodOfSort, page);
+                }
             }
         });
         LiveData<List<Movie>> moviesFromLiveData = viewModel.getMovies();
         moviesFromLiveData.observe((LifecycleOwner) this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(@Nullable List<Movie> movies) {
-                movieAdapter.setMovies(movies);
+                if(page == 1) {
+                    movieAdapter.setMovies(movies);
+                }
             }
         });
     }
@@ -127,7 +139,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void setMethodOfSort(boolean isTopRated) {
-        int methodOfSort;
         if (isTopRated) {
             textViewTopRated.setTextColor(getResources().getColor(R.color.colorAccent));
             textViewPopularity.setTextColor(getResources().getColor(R.color.white));
@@ -137,32 +148,46 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             textViewTopRated.setTextColor(getResources().getColor(R.color.white));
             methodOfSort = NetworkUtils.POPULARITY;
         }
-        downloadData(methodOfSort, 1);
+        downloadData(methodOfSort, page);
     }
 
     private void downloadData(int methodOfSort, int page) {
         URL url = NetworkUtils.buildURL(methodOfSort, page);
         Bundle bundle = new Bundle();
-        bundle.putString("url",url.toString());
+        bundle.putString("url", url.toString());
         loaderManager.restartLoader(LOADER_ID, bundle, this);
     }
 
     @NonNull
     @Override
-    public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {
+    public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {//создается загрузчик
         NetworkUtils.JSONLoader jsonLoader = new NetworkUtils.JSONLoader(this, bundle);
+        jsonLoader.setOnStartLoadingListener(new NetworkUtils.JSONLoader.OnStartLoadingListener() {
+            @Override
+            public void onStartLoading() {
+                progressBarLoading.setVisibility(View.VISIBLE);
+                isLoading = true;
+            }
+        });
         return jsonLoader;
     }
 
     @Override
-    public void onLoadFinished(@NonNull Loader<JSONObject> loader, JSONObject jsonObject) {
+    public void onLoadFinished(@NonNull Loader<JSONObject> loader, JSONObject jsonObject) {//загружает json
         ArrayList<Movie> movies = JSONUtils.getMoviesFromJSON(jsonObject);
-        if(movies != null && !movies.isEmpty()){
-            viewModel.deleteAllMovies();
-            for(Movie movie: movies){
+        if (movies != null && !movies.isEmpty()) {
+            if(page == 1){
+                viewModel.deleteAllMovies();
+                movieAdapter.clear();
+            }
+            for (Movie movie : movies) {
                 viewModel.insertMovie(movie);
             }
+            movieAdapter.addMovies(movies);
+            page++;
         }
+        isLoading = false;
+        progressBarLoading.setVisibility(View.INVISIBLE);
         loaderManager.destroyLoader(LOADER_ID);
     }
 
