@@ -7,18 +7,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
@@ -40,7 +36,6 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<JSONObject> {
 
-    private RecyclerView recyclerViewPosters;
     private MovieAdapter movieAdapter;
     private Switch switchSort;
     private TextView textViewTopRated;
@@ -99,43 +94,31 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         textViewTopRated = findViewById(R.id.textViewTopRated);
         progressBarLoading = findViewById(R.id.progressBarLoading);
         switchSort = findViewById(R.id.switchSort);
-        recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
+        RecyclerView recyclerViewPosters = findViewById(R.id.recyclerViewPosters);
         recyclerViewPosters.setLayoutManager(new GridLayoutManager(this, getColumnCount()));
         movieAdapter = new MovieAdapter();
         recyclerViewPosters.setAdapter(movieAdapter);
         switchSort.setChecked(true);
-        switchSort.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                page = 1;
-                setMethodOfSort(isChecked);
-            }
+        switchSort.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            page = 1;
+            setMethodOfSort(isChecked);
         });
         switchSort.setChecked(false);
-        movieAdapter.setOnPosterClickListener(new MovieAdapter.OnPosterClickListener() {
-            @Override
-            public void onPosterClick(int position) {
-                Movie movie = movieAdapter.getMovies().get(position);
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra("id", movie.getId());
-                startActivity(intent);
-            }
+        movieAdapter.setOnPosterClickListener(position -> {
+            Movie movie = movieAdapter.getMovies().get(position);
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra("id", movie.getId());
+            startActivity(intent);
         });
-        movieAdapter.setOnReachEndListener(new MovieAdapter.OnReachEndListener() {
-            @Override
-            public void onReachEnd() {
-                if (!isLoading) {
-                    downloadData(methodOfSort, page);
-                }
+        movieAdapter.setOnReachEndListener(() -> {
+            if (!isLoading) {
+                downloadData(methodOfSort, page);
             }
         });
         LiveData<List<Movie>> moviesFromLiveData = viewModel.getMovies();
-        moviesFromLiveData.observe((LifecycleOwner) this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(@Nullable List<Movie> movies) {
-                if (page == 1) {
-                    movieAdapter.setMovies(movies);
-                }
+        moviesFromLiveData.observe(this, movies -> {
+            if (page == 1) {
+                movieAdapter.setMovies(movies);
             }
         });
     }
@@ -174,12 +157,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<JSONObject> onCreateLoader(int id, @Nullable Bundle bundle) {//создается загрузчик
         NetworkUtils.JSONLoader jsonLoader = new NetworkUtils.JSONLoader(this, bundle);
-        jsonLoader.setOnStartLoadingListener(new NetworkUtils.JSONLoader.OnStartLoadingListener() {
-            @Override
-            public void onStartLoading() {
-                progressBarLoading.setVisibility(View.VISIBLE);
-                isLoading = true;
-            }
+        jsonLoader.setOnStartLoadingListener(() -> {
+            progressBarLoading.setVisibility(View.VISIBLE);
+            isLoading = true;
         });
         return jsonLoader;
     }

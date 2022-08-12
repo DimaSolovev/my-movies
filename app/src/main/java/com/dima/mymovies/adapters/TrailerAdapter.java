@@ -43,17 +43,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
 
     class TrailerViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView textViewNameOfVideo;
+        private final TextView textViewNameOfVideo;
 
         public TrailerViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewNameOfVideo = itemView.findViewById(R.id.textViewNameOfVideo);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(onTrailerClickListener != null){
-                        onTrailerClickListener.onTrailerClick(trailers.get(getAdapterPosition()).getKey());
-                    }
+            itemView.setOnClickListener(v -> {
+                if(onTrailerClickListener != null){
+                    onTrailerClickListener.onTrailerClick(trailers.get(getAdapterPosition()).getKey());
                 }
             });
         }

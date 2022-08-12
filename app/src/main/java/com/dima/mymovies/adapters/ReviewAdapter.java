@@ -36,9 +36,9 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         return reviews.size();
     }
 
-    class ReviewViewHolder extends RecyclerView.ViewHolder {
-        private TextView textViewAuthor;
-        private TextView textViewContent;
+    static class ReviewViewHolder extends RecyclerView.ViewHolder {
+        private final TextView textViewAuthor;
+        private final TextView textViewContent;
         public ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
             textViewAuthor = itemView.findViewById(R.id.textViewAuthor);

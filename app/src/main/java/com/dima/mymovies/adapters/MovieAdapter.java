@@ -64,17 +64,14 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     class MovieViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView imageViewSmallPoster;
+        private final ImageView imageViewSmallPoster;
 
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             imageViewSmallPoster = itemView.findViewById(R.id.imageViewSmallPoster);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onPosterClickListener != null) {
-                        onPosterClickListener.onPosterClick(getAdapterPosition());
-                    }
+            itemView.setOnClickListener(v -> {
+                if (onPosterClickListener != null) {
+                    onPosterClickListener.onPosterClick(getAdapterPosition());
                 }
             });
         }

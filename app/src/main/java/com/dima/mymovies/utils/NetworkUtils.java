@@ -125,7 +125,7 @@ public class NetworkUtils {
 
     public static class JSONLoader extends AsyncTaskLoader<JSONObject> {
 
-        private Bundle bundle;
+        private final Bundle bundle;
         private OnStartLoadingListener onStartLoadingListener;
 
         public interface OnStartLoadingListener {
@@ -180,9 +180,7 @@ public class NetworkUtils {
                     line = reader.readLine();
                 }
                 result = new JSONObject(builder.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             } finally {
                 if (connection != null) {
@@ -213,9 +211,7 @@ public class NetworkUtils {
                     line = reader.readLine();
                 }
                 result = new JSONObject(builder.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             } finally {
                 if (connection != null) {

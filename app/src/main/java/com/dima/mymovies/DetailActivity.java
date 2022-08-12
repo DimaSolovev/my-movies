@@ -37,27 +37,13 @@ import java.util.Locale;
 
 public class DetailActivity extends AppCompatActivity {
 
-    private ImageView imageViewBigPoster;
-    private TextView textViewTitle;
-    private TextView textViewOriginalTitle;
-    private TextView textViewRating;
-    private TextView textViewReleaseDate;
-    private TextView textViewOverview;
     private ImageView imageViewAddToFavourite;
-    private ScrollView scrollViewInfo;
-
-    private RecyclerView recyclerViewTrailers;
-    private RecyclerView recyclerViewReviews;
-    private ReviewAdapter reviewAdapter;
-    private TrailerAdapter trailerAdapter;
 
     private int id;
     private Movie movie;
     private FavouriteMovie favouriteMovie;
 
     private MainViewModel viewModel;
-
-    private static String lang;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -86,15 +72,15 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        lang = Locale.getDefault().getLanguage();
-        imageViewBigPoster = findViewById(R.id.imageViewBigPoster);
-        textViewTitle = findViewById(R.id.textViewTitle);
-        textViewOriginalTitle = findViewById(R.id.textViewOriginalTitle);
-        textViewRating = findViewById(R.id.textViewRating);
-        textViewReleaseDate = findViewById(R.id.textViewReleseDate);
-        textViewOverview = findViewById(R.id.textViewOverView);
+        String lang = Locale.getDefault().getLanguage();
+        ImageView imageViewBigPoster = findViewById(R.id.imageViewBigPoster);
+        TextView textViewTitle = findViewById(R.id.textViewTitle);
+        TextView textViewOriginalTitle = findViewById(R.id.textViewOriginalTitle);
+        TextView textViewRating = findViewById(R.id.textViewRating);
+        TextView textViewReleaseDate = findViewById(R.id.textViewReleseDate);
+        TextView textViewOverview = findViewById(R.id.textViewOverView);
         imageViewAddToFavourite = findViewById(R.id.imageViewAddToFavourite);
-        scrollViewInfo = findViewById(R.id.scrollViewInfo);
+        ScrollView scrollViewInfo = findViewById(R.id.scrollViewInfo);
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("id")) {
             id = intent.getIntExtra("id", -1);
@@ -111,16 +97,13 @@ public class DetailActivity extends AppCompatActivity {
         textViewReleaseDate.setText(movie.getReleaseDate());
         textViewRating.setText(Double.toString(movie.getVoteAverage()));
         setFavourite();
-        recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
-        recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
-        trailerAdapter = new TrailerAdapter();
-        reviewAdapter = new ReviewAdapter();
-        trailerAdapter.setOnTrailerClickListener(new TrailerAdapter.OnTrailerClickListener() {
-            @Override
-            public void onTrailerClick(String url) {
-                Intent intentToTrailer = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                startActivity(intentToTrailer);
-            }
+        RecyclerView recyclerViewTrailers = findViewById(R.id.recyclerViewTrailers);
+        RecyclerView recyclerViewReviews = findViewById(R.id.recyclerViewReviews);
+        TrailerAdapter trailerAdapter = new TrailerAdapter();
+        ReviewAdapter reviewAdapter = new ReviewAdapter();
+        trailerAdapter.setOnTrailerClickListener(url -> {
+            Intent intentToTrailer = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intentToTrailer);
         });
         recyclerViewReviews.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewTrailers.setLayoutManager(new LinearLayoutManager(this));
